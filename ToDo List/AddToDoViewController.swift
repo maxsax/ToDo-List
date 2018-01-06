@@ -27,40 +27,25 @@ class AddToDoViewController: UIViewController {
 
     
     @IBAction func addTap(_ sender: Any) {
-        let toDo = ToDo()
         
-        if let titleText = titleTextField.text {
-            toDo.name = titleText
-            toDo.important = importantSwitch.isOn
+        // gives access to the persistent container in the AppDelegate.swift
+        // context is needed to initialize coreData objects (called Managed Object Context)
+        
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            let toDo = ToDoCoreData(entity: ToDoCoreData.entity(), insertInto: context)
+        
+            if let titleText = titleTextField.text {
+                toDo.name = titleText
+                toDo.important = importantSwitch.isOn
+            }
             
-            previousVC.toDos.append(toDo)
+            try? context.save()
             previousVC.tableView.reloadData()
-            
             navigationController?.popViewController(animated: true)
-            
-        } else {
-            // insufficent data to create a new todo
             
         }
         
     }
     
     
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -11,7 +11,7 @@ import UIKit
 class CompleteToDoViewController: UIViewController {
 
     var previousVC = TodoTableViewController()
-    var selectedToDo = ToDo()
+    var selectedToDo: ToDoCoreData?
     
     @IBOutlet weak var titleLabel: UILabel!
     
@@ -20,21 +20,18 @@ class CompleteToDoViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        titleLabel.text = selectedToDo.name
+        titleLabel.text = selectedToDo?.name
     }
 
     @IBAction func completeTapped(_ sender: Any) {
-        var index = 0
         
-        for toDo in previousVC.toDos {
-            if toDo.name == selectedToDo.name && toDo.important == selectedToDo.important {
-                previousVC.toDos.remove(at: index)
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            
+            if let theToDo = selectedToDo {
+                context.delete(theToDo)
+                navigationController?.popViewController(animated: true)
             }
-            index += 1
         }
-        
-        previousVC.tableView.reloadData()
-        navigationController?.popViewController(animated: true)
         
     }
     
